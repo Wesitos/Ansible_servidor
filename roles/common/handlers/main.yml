@@ -1,0 +1,6 @@
+---
+- name: restart httpd
+  service: name=httpd state=restarted enabled={{httpd_at_boot}}
+
+- name: restart mysqld
+  service: name=mysqld state=restarted enabled={{mysqld_at_boot}}

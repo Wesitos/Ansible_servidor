@@ -1,0 +1,30 @@
+---
+- name: Ensure http is at the latest version
+  yum: name=httpd state=latest
+  notify: restart httpd
+  tags: httpd
+      
+- name: Ensure php and mysql are at the latest version
+  yum: name={{ item }} state=latest enablerepo="remi","epel"
+  when: not mysql_php_repo_oficial
+  with_items:
+    - php
+    - php-mysql
+    - mysql
+    - mysql-server
+    - MySQL-python
+  notify: restart mysqld
+
+- name: Ensure php and mysql are at the latest version
+  yum: name={{ item }} state=latest disablerepo="remi","epel"
+  when: mysql_php_repo_oficial
+  with_items:
+    - php
+    - php-mysql
+    - mysql
+    - mysql-server
+    - MySQL-python
+  notify: restart mysqld
+
+- name: Ensure phpmyadmin is at the latest version
+  yum: name=phpMyAdmin state=latest enablerepo="epel"

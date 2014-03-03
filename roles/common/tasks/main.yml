@@ -1,0 +1,35 @@
+---
+
+#Repository actions
+
+- name: Add the EPEL yum repo (x86)
+  command: /bin/rpm -U "http://fedora.cu.be/epel/6/i386/epel-release-6-8.noarch.rpm" creates=/etc/yum.repos.d/epel.repo
+  when: ansible_architecture == "x86"
+  tags: repo
+
+- name: Add the EPEL yum repo (x86_64)
+  command: /bin/rpm -U "http://fedora.cu.be/epel/6/x86_64/epel-release-6-8.noarch.rpm" creates=/etc/yum.repos.d/epel.repo
+  when: ansible_architecture == "x86_64"
+  tags: repo
+
+- name: Add the REMI yum repo
+  command: /bin/rpm -U "http://rpms.famillecollet.com/enterprise/remi-release-6.rpm" creates=/etc/yum.repos.d/remi.repo
+  tags: repo
+
+#Timezone actions
+
+- name: Update timezone (1)
+  file: path=/etc/localtime state=absent
+
+- name: Update timezone (2)
+  file: src="/usr/share/zoneinfo/{{timezone}}" path=/etc/localtime owner=root state=link
+  tags: ntp
+
+- name: Ensure ntpd is installed
+  yum: name=ntp state=present
+  tags: ntp
+
+- name: Ensure ntpd is running
+  service: name=ntpd state=started enabled=yes
+  tags: ntp
+      
